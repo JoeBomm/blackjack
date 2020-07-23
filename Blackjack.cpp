@@ -189,7 +189,7 @@ void Blackjack::playHand()
       {
           playPlayerHand();
           if(!playerBust)
-              setPlayerStatus("\n");
+              setPlayerStatus("");
           playDealerHand();
           done=true;
 
@@ -229,7 +229,7 @@ void Blackjack::push()
 {
     playerWallet.addFunds(bet);
     bet = 0;
-    setTableMessage("PUSH\n");
+    setTableMessage("PUSH");
 }
 
 void Blackjack::playPlayerHand()
@@ -240,22 +240,23 @@ void Blackjack::playPlayerHand()
     {
       cout << "\n1 to hit. 2 to stay: ";
       cin  >> input;
+      cout << string( 6, '\n' );
 
       if(input==1)
       {
           hit(playerHand);
-          setPlayerStatus("Player Hits\n");
+          setPlayerStatus("Player Hits");
           playerHand.tallyCards();
           if(playerHand.getTotal()>21)
           {
-            setPlayerStatus("Bust\n");
+            setPlayerStatus("Bust");
             playerBust = true;
             done=true;
           }
       }
       else if(input==2)
       {
-          setPlayerStatus("Player Stands\n");
+          setPlayerStatus("Player Stands");
           done = true;
       }
 
@@ -275,18 +276,18 @@ void Blackjack::playDealerHand()
         if(dealerHand.getTotal()>21)
         {
             dealerBust = true;
-            setDealerStatus("Dealer Busts\n");
+            setDealerStatus("Dealer Busts");
             done = true;
         }
         else if(dealerHand.getTotal()<17)
         {
             hit(dealerHand);
-            setDealerStatus("Dealer Hits\n");
+            setDealerStatus("Dealer Hits");
             dealerHand.tallyCards();
         }
         else
         {
-          setDealerStatus("Dealer Stands\n");
+          setDealerStatus("Dealer Stands");
           done = true;
         }
         print();
@@ -306,9 +307,9 @@ void Blackjack::print() const
     if (dealerStatus!="")
         cout << dealerStatus << '\n';
 
-    cout << string( 5, '\n' );
+    cout << string( 6, '\n' );
     cout << setw(40) << tableMessage;
-    cout << string( 5, '\n' );
+    cout << string( 6, '\n' );
 
 
     cout << "\nPlayer hand: ";
