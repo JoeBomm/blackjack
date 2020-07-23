@@ -18,6 +18,7 @@
 
 
                                                    a game by Joe Bommarito
+fonts: http://www.patorjk.com/software/taag/#p=display&h=2&v=2&f=Big%20Money-ne&t=Blackjack
 
 
 
@@ -43,23 +44,6 @@ Player Action                            Wallet: $9999
 
 Prompt.......:|||
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//http://www.patorjk.com/software/taag/#p=display&h=2&v=2&f=Big%20Money-ne&t=Blackjack
 
 */
 
@@ -91,24 +75,34 @@ void Blackjack::game()
   deck.shuffle();
   printTitle();
   cout << "Enter 1 to play or 2 for rules: ";
-  cin  >> input;
-  if(input==1)
-  {
 
-      do
-      {
-      playHand();
-      cout << "Play again? Enter 1 to play again: ";
-      cin  >> input;
-      }
-      while(input==1);
-  }
-  else if(input==2)
-  {
-      printRules();
-      game();
-  }
+    cin  >> input;
+    if(input==1)
+    {
+        do
+        {
+          if(playerWallet.getFunds()>0)
+          {
+            playHand();
+            cout << "Play again? Enter 1 to play again: ";
+            cin  >> input;
+          }
+          else
+            input = 0;
+        }
+        while(input==1);
+    }
+    else if(input==2)
+    {
+        printRules();
+        game();
+    }
+    if(playerWallet.getFunds()>0)
+        cout << "Come back soon!\n";
+    else
+        cout << "Come back when you have more money.\n";
 }
+
 
 void Blackjack::placeBet(int amount)
 {
@@ -139,24 +133,24 @@ void Blackjack::hit(Hand & hand)
 
 void Blackjack::playHand()
 {
+      bool  done = false;
+      playerBust = false;
+      dealerBust = false;
+
       playerHand.discard();
       dealerHand.discard();
       playerStatus = "\n";
       dealerStatus = "\n";
       tableMessage = "\n";
-
-      bool done = false;
-      playerBust = false;
-      dealerBust = false;
       bet = 0;
 
-      // int amountToBet = 0;
-      // while(bet==0)
-      // {
-      //     cout << "Enter Bet: ";
-      //     cin  >> amountToBet;
-      //     placeBet(amountToBet);
-      // }
+      int amountToBet = 0;
+      while(bet==0)
+      {
+          cout << "Enter Bet: ";
+          cin  >> amountToBet;
+          placeBet(amountToBet);
+      }
 
       if(deck.getRemainingCards()<13)
       {
@@ -166,19 +160,13 @@ void Blackjack::playHand()
 
       dealerDraw();
       dealerHand.tallyCards();
-      // cout << "Dealer hand: ";
-      // dealerHand.print();
-      //
-      //
-      // cout << '\n';
+
 
       playerDraw();
       playerHand.tallyCards();
 
       print();
-      // cout << "Player hand: ";
-      // playerHand.print();
-      // cout << "Player total: " << playerHand.getTotal() << '\n';
+
       if(dealerHand.getTotal()==21)
       {
           flipDealerCard();
@@ -195,29 +183,6 @@ void Blackjack::playHand()
           payBlackJack();
           done = true;
       }
-      // if(dealerHand.getTotal()==21 && dealerHand.getCard(0).getValue()==1)
-      // {
-      //     if(playerHand.getTotal()==21)
-      //     {
-      //         push();
-      //         done = true;
-      //     }
-      //     else
-      //     {
-      //       dealerHand.getCard(1).toggleActive();
-      //       setTableMessage("Dealer Blackjack. Player Loses");
-      //       // print();
-      //       done = true;
-      //     }
-      // }
-      //
-      // else if(playerHand.getTotal()==21 && dealerHand.getTotal()!=21)
-      // {
-      //     setTableMessage("BLACKJACK!");
-      //     // print();
-      //     payBlackJack();
-      //     done = true;
-      // }
 
       while(!done)
       {
@@ -391,8 +356,6 @@ void Blackjack::printTitle()
        <<"                                        \\______/\n\n\n"
        <<"                                                    a game by Joe Bommarito\n\n\n"
        << termcolor::reset;
-       // continueMessage();
-
 
 }
 
