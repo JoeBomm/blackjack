@@ -111,7 +111,11 @@ void Blackjack::placeBet(int amount)
         bet = amount;
         playerWallet.subtractFunds(amount);
     }
-    else bet = 0;
+    else
+    {
+        bet = 0;
+        cout << "Quit joking around. Bets must be greater than 0 and less than your balance.\n";
+    }
 }
 
 void Blackjack::dealerDraw()
@@ -134,8 +138,10 @@ void Blackjack::hit(Hand & hand)
 void Blackjack::playHand()
 {
       bool  done = false;
+      bool inputDone = false;
       playerBust = false;
       dealerBust = false;
+      string inputString = "Bet must be a number.\n";
 
       playerHand.discard();
       dealerHand.discard();
@@ -147,10 +153,28 @@ void Blackjack::playHand()
       int amountToBet = 0;
       while(bet==0)
       {
-          cout << "Enter Bet (Funds available $"
-               << playerWallet.getFunds() <<"): ";
-          cin  >> amountToBet;
-          placeBet(amountToBet);
+
+           do
+           {
+             cout << "Enter Bet (Funds available $"
+             << playerWallet.getFunds() <<"): ";
+             try
+             {
+               cin >> amountToBet;
+               if(!cin)
+                 throw inputString;
+               else
+                 inputDone = true;
+             }
+             catch(string s)
+             {
+               cout << s;
+               cin.clear();
+               cin.ignore(100, '\n');
+             }
+           }
+           while(!inputDone);
+           placeBet(amountToBet);
       }
 
       if(deck.getRemainingCards()<13)
@@ -236,10 +260,34 @@ void Blackjack::playPlayerHand()
 {
     int input;
     bool done = false;
+    bool inputDone = false;
+    string inputString = "Quit fooling around. 1, 2, or 3 only.\n";
     while (!done)
     {
-      cout << "\n1 to hit. 2 to stay: ";
-      cin  >> input;
+
+
+      do
+      {
+        cout << "\n1 to hit. 2 to stay, 3 to double down: ";
+        try
+        {
+          cin >> input;
+          if(!cin)
+            throw inputString;
+          else
+            inputDone = true;
+        }
+        catch(string s)
+        {
+          cout << s;
+          cin.clear();
+          cin.ignore(100, '\n');
+        }
+      }
+      while(!inputDone);
+
+
+
       cout << string( 6, '\n' );
 
       if(input==1)
@@ -259,6 +307,30 @@ void Blackjack::playPlayerHand()
           setPlayerStatus("Player Stands");
           done = true;
       }
+      else if(input==3)
+      {
+          if (playerWallet.getFunds()>=bet)
+          {
+              setPlayerStatus("Player Double Down");
+              playerWallet.subtractFunds(bet);
+              bet*=2;
+
+              hit(playerHand);
+              playerHand.tallyCards();
+              if(playerHand.getTotal()>21)
+              {
+                setPlayerStatus("Bust");
+                playerBust = true;
+              }
+              done=true;
+          }
+          else
+          {
+            setPlayerStatus("Not enough funds to double");
+          }
+      }
+      else
+          setPlayerStatus("That is not an option.");
 
       print();
     }
@@ -297,7 +369,8 @@ void Blackjack::playDealerHand()
 
 void Blackjack::print() const
 {
-    cout << "\nDealer hand: ";
+    cout << string( 6, '\n' );
+    cout << "Dealer hand: ";
     dealerHand.print();
     cout << '\n';
 
@@ -370,10 +443,39 @@ void Blackjack::continueMessage() const
 void Blackjack::printRules() const
 {
   int input;
-  cout << "These are the rules\n";
-  cout << "Enter 1 to return: ";
-  cin >> input;
-
+  string inputString = "Input a number to return: ";
+  bool done = false;
+  cout << "\n\n\n\n\nBLACKJACK RULES:\n\n\n\n\n"
+       << "Dealer stays on soft 17.\n"
+       << "Over 21 is a bust.\n"
+       << "Blackjack beats 21. Blackjack pushes blackjack\n"
+       << "Blackjack is only an Ace and a 10 value card (10 or face)\n"
+       << "Blackjack is only counted on the first deal of a hand.\n"
+       << "If there is a blackjack on either side on open, the hand ends.\n"
+       << "Hit means you want another card.\n"
+       << "Stay/stand means you don't want anymore cards.\n"
+       << "Double down means you only want 1 card, but you'll double your bet.\n"
+       << "Double down is only allowed on the first hit.\n"
+       << "You can only double if you have the available funds.\n\n\n"
+       << "Enter 1 to return: ";
+  do
+  {
+    try
+    {
+      cin >> input;
+      if(!cin)
+        throw inputString;
+      else
+        done = true;
+    }
+    catch(string s)
+    {
+      cout << s;
+      cin.clear();
+      cin.ignore(100, '\n');
+    }
+  }
+  while(!done);
 }
 
 void Blackjack::flipDealerCard() const
