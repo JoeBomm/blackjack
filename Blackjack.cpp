@@ -147,7 +147,8 @@ void Blackjack::playHand()
       int amountToBet = 0;
       while(bet==0)
       {
-          cout << "Enter Bet: ";
+          cout << "Enter Bet (Funds available $"
+               << playerWallet.getFunds() <<"): ";
           cin  >> amountToBet;
           placeBet(amountToBet);
       }
