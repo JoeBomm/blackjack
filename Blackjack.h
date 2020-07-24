@@ -22,7 +22,6 @@ public:
   void setPlayerStatus(string);
   void setDealerStatus(string);
   void printTitle();
-  void continueMessage() const;
   void printRules() const;
   void setTableMessage(string);
   void flipDealerCard() const;

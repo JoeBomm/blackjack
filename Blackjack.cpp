@@ -410,11 +410,6 @@ void Blackjack::printTitle()
 
 }
 
-void Blackjack::continueMessage() const
-{
-    cout << "Press Enter to Continue";
-    cin.ignore(std::numeric_limits<streamsize>::max(),'\n');
-}
 
 void Blackjack::printRules() const
 {
