@@ -5,7 +5,6 @@ using namespace std;
 
 class Card
 {
-
 public:
   Card();
   Card(string, int, Suit, bool active=0);
@@ -17,11 +16,9 @@ public:
   void print();
   string getSuit();
 
-
 private:
   string name;
   int value;
   Suit cardSuit;
-
   bool active;
 };

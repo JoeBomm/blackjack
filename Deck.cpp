@@ -1,12 +1,26 @@
+#if defined(__unix__) || defined(__unix)
+#   define DECK_OS_LINUX
+#elif defined (_WIN32) || defined (_WIN64)
+#   define DECK_OS_WINDOWS
+#else
+#   error unspported platform
+#endif
+
 #include <random>
 #include <iostream>
-// #include "Card.h"
 #include "Deck.h"
 
 using namespace std;
 
 Deck::Deck()
 {
+  string ten;
+
+  #if defined(DECK_OS_LINUX)
+        ten = "\u2491";
+  #else
+        ten = "10";
+  #endif
 
   index = 0;
   maxCards = 52;
@@ -21,7 +35,7 @@ Deck::Deck()
   cards[6]  = Card("7",  7, Suit::Spades);
   cards[7]  = Card("8",  8, Suit::Spades);
   cards[8]  = Card("9",  9, Suit::Spades);
-  cards[9]  = Card("\u2491",10, Suit::Spades);
+  cards[9]  = Card(ten,10, Suit::Spades);
   cards[10] = Card("J", 10, Suit::Spades);
   cards[11] = Card("Q", 10, Suit::Spades);
   cards[12] = Card("K", 10, Suit::Spades);
@@ -35,7 +49,7 @@ Deck::Deck()
   cards[19] = Card("7",  7, Suit::Clubs);
   cards[20] = Card("8",  8, Suit::Clubs);
   cards[21] = Card("9",  9, Suit::Clubs);
-  cards[22] = Card("\u2491",10, Suit::Clubs);
+  cards[22] = Card(ten,10, Suit::Clubs);
   cards[23] = Card("J", 10, Suit::Clubs);
   cards[24] = Card("Q", 10, Suit::Clubs);
   cards[25] = Card("K", 10, Suit::Clubs);
@@ -49,7 +63,7 @@ Deck::Deck()
   cards[32] = Card("7",  7, Suit::Diamonds);
   cards[33] = Card("8",  8, Suit::Diamonds);
   cards[34] = Card("9",  9, Suit::Diamonds);
-  cards[35] = Card("\u2491",10, Suit::Diamonds);
+  cards[35] = Card(ten,10, Suit::Diamonds);
   cards[36] = Card("J", 10, Suit::Diamonds);
   cards[37] = Card("Q", 10, Suit::Diamonds);
   cards[38] = Card("K", 10, Suit::Diamonds);
@@ -63,7 +77,7 @@ Deck::Deck()
   cards[45] = Card("7",  7, Suit::Hearts);
   cards[46] = Card("8",  8, Suit::Hearts);
   cards[47] = Card("9",  9, Suit::Hearts);
-  cards[48] = Card("\u2491",10, Suit::Hearts);
+  cards[48] = Card(ten,10, Suit::Hearts);
   cards[49] = Card("J", 10, Suit::Hearts);
   cards[50] = Card("Q", 10, Suit::Hearts);
   cards[51] = Card("K", 10, Suit::Hearts);
@@ -73,6 +87,13 @@ Deck::Deck()
 
 Deck::Deck(int decks)
 {
+  string ten;
+
+  #if defined(DECK_OS_LINUX)
+        ten = "\u2491";
+  #else
+        ten = "10";
+  #endif
 
   index = 0;
   maxCards = 52*decks;
@@ -89,7 +110,7 @@ Deck::Deck(int decks)
       cards[6+(52*i)]  = Card("7",  7, Suit::Spades);
       cards[7+(52*i)]  = Card("8",  8, Suit::Spades);
       cards[8+(52*i)]  = Card("9",  9, Suit::Spades);
-      cards[9+(52*i)]  = Card("\u2491",10, Suit::Spades);
+      cards[9+(52*i)]  = Card(ten,10, Suit::Spades);
       cards[10+(52*i)] = Card("J", 10, Suit::Spades);
       cards[11+(52*i)] = Card("Q", 10, Suit::Spades);
       cards[12+(52*i)] = Card("K", 10, Suit::Spades);
@@ -103,7 +124,7 @@ Deck::Deck(int decks)
       cards[19+(52*i)] = Card("7",  7, Suit::Clubs);
       cards[20+(52*i)] = Card("8",  8, Suit::Clubs);
       cards[21+(52*i)] = Card("9",  9, Suit::Clubs);
-      cards[22+(52*i)] = Card("\u2491",10, Suit::Clubs);
+      cards[22+(52*i)] = Card(ten,10, Suit::Clubs);
       cards[23+(52*i)] = Card("J", 10, Suit::Clubs);
       cards[24+(52*i)] = Card("Q", 10, Suit::Clubs);
       cards[25+(52*i)] = Card("K", 10, Suit::Clubs);
@@ -117,7 +138,7 @@ Deck::Deck(int decks)
       cards[32+(52*i)] = Card("7",  7, Suit::Diamonds);
       cards[33+(52*i)] = Card("8",  8, Suit::Diamonds);
       cards[34+(52*i)] = Card("9",  9, Suit::Diamonds);
-      cards[35+(52*i)] = Card("\u2491",10, Suit::Diamonds);
+      cards[35+(52*i)] = Card(ten,10, Suit::Diamonds);
       cards[36+(52*i)] = Card("J", 10, Suit::Diamonds);
       cards[37+(52*i)] = Card("Q", 10, Suit::Diamonds);
       cards[38+(52*i)] = Card("K", 10, Suit::Diamonds);
@@ -131,7 +152,7 @@ Deck::Deck(int decks)
       cards[45+(52*i)] = Card("7",  7, Suit::Hearts);
       cards[46+(52*i)] = Card("8",  8, Suit::Hearts);
       cards[47+(52*i)] = Card("9",  9, Suit::Hearts);
-      cards[48+(52*i)] = Card("\u2491",10, Suit::Hearts);
+      cards[48+(52*i)] = Card(ten,10, Suit::Hearts);
       cards[49+(52*i)] = Card("J", 10, Suit::Hearts);
       cards[50+(52*i)] = Card("Q", 10, Suit::Hearts);
       cards[51+(52*i)] = Card("K", 10, Suit::Hearts);

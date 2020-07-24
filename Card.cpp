@@ -1,3 +1,11 @@
+#if defined(__unix__) || defined(__unix)
+#   define CARD_OS_LINUX
+#elif defined (_WIN32) || defined (_WIN64)
+#   define CARD_OS_WINDOWS
+#else
+#   error unspported platform
+#endif
+
 #include "Card.h"
 #include <iostream>
 #include "termcolor/termcolor.hpp"
@@ -27,6 +35,7 @@ const Card& Card::operator =(const Card& otherCard)
         value = otherCard.value;
         active = otherCard.active;
         cardSuit = otherCard.cardSuit;
+        return *this;
 }
 
 string Card::getName()
@@ -62,8 +71,16 @@ void Card::print()
             cout << getSuit();
     }
     else
+    {
+
         cout << termcolor::dark << termcolor::white
-             <<termcolor::on_blue << termcolor::bold << "\uFF04";
+             <<termcolor::on_blue << termcolor::bold;
+        #if defined(CARD_OS_LINUX)
+            cout << "\uFF04";
+        #else
+            cout << "$";
+        #endif
+    }
 
     cout << termcolor::reset;
 }
@@ -71,13 +88,38 @@ void Card::print()
 string Card::getSuit()
 {
     if(cardSuit==Suit::Hearts)
+    {
+    #if defined(CARD_OS_LINUX)
         return "\u2665";
+    #else
+        return "H";
+    #endif
+    }
     else if (cardSuit==Suit::Diamonds)
+    {
+    #if defined(CARD_OS_LINUX)
         return "\u2666";
+    #else
+        return "D";
+    #endif
+
+    }
     else if (cardSuit==Suit::Spades)
+    {
+    #if defined(CARD_OS_LINUX)
         return "\u2660";
+    #else
+        return "S";
+    #endif
+    }
     else if (cardSuit==Suit::Clubs)
+    {
+    #if defined(CARD_OS_LINUX)
         return "\u2663";
+    #else
+        return "C";
+    #endif
+    }
     else
         return "Null";
 }
