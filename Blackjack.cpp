@@ -20,35 +20,36 @@ Blackjack::Blackjack()
 
 void Blackjack::game()
 {
-  int input;
-  bool done = false;
+    int input;
+    bool done = false;
 
-  deck.shuffle();
-  printTitle();
-  cout << "Enter 1 to play or 2 for rules: ";
+    deck.shuffle();
+    printTitle();
+
+    cout << "Enter 1 to play or 2 for rules: ";
 
     cin  >> input;
     if(input==1)
     {
-        do
-        {
-          if(playerWallet.getFunds()>0)
+          do // loop to keep playing hands
           {
-            playHand();
-            cout << "Play again? Enter 1 to play again: ";
-            cin  >> input;
+              if(playerWallet.getFunds()>0)
+              {
+                  playHand();
+                  cout << "Play again? Enter 1 to play again: ";
+                  cin  >> input;
+              }
+              else // end game if player runs out of money
+                  input = 0;
           }
-          else
-            input = 0;
-        }
-        while(input==1);
+          while(input==1);
     }
     else if(input==2)
     {
         printRules();
         game();
     }
-    if(playerWallet.getFunds()>0)
+    if(playerWallet.getFunds()>0) // messages for ending the game
         cout << "Come back soon!\n";
     else
         cout << "Come back when you have more money.\n";
@@ -56,41 +57,41 @@ void Blackjack::game()
 
 void Blackjack::placeBet()
 {
+    int amountToBet;
+    bool inputDone = false;
+    string inputString = "Bet must be a number.\n";
 
-  int amountToBet;
-  bool inputDone = false;
-  string inputString = "Bet must be a number.\n";
+    do
+    {
+        cout << "Enter Bet (Funds available $"
+        << playerWallet.getFunds() <<"): ";
+        try // exceptions for proper bet input
+        {
+            cin >> amountToBet;
+            if(!cin)
+                throw inputString;
+            else if(amountToBet > playerWallet.getFunds())
+            {
+                cout << "You don't have that kind of cash\n";
+            }
+            else if(amountToBet < 1)
+            {
+                cout << "We don't have time for this. Make a real bet\n";
+            }
+            else
+                inputDone = true;
+        }
+        catch(string s)
+        {
+            cout << s;
+            cin.clear();
+            cin.ignore(100, '\n');
+        }
+    }
+    while(!inputDone);
 
-       do
-       {
-         cout << "\b\b\bEnter Bet (Funds available $"
-         << playerWallet.getFunds() <<"): ";
-         try
-         {
-           cin >> amountToBet;
-           if(!cin)
-             throw inputString;
-           else if(amountToBet > playerWallet.getFunds())
-           {
-             cout << "You don't have that kind of cash\n";
-           }
-           else if(amountToBet < 1)
-           {
-             cout << "We don't have time for this. Make a real bet\n";
-           }
-           else
-             inputDone = true;
-         }
-         catch(string s)
-         {
-           cout << s;
-           cin.clear();
-           cin.ignore(100, '\n');
-         }
-       }
-       while(!inputDone);
-       bet = amountToBet;
-       playerWallet.subtractFunds(bet);
+    bet = amountToBet;
+    playerWallet.subtractFunds(bet);
 }
 
 void Blackjack::dealerDraw()
@@ -204,6 +205,7 @@ void Blackjack::payBlackJack()
 
 void Blackjack::push()
 {
+    // on a tie pay back player bet
     playerWallet.addFunds(bet);
     bet = 0;
     setTableMessage("PUSH");
@@ -211,19 +213,23 @@ void Blackjack::push()
 
 void Blackjack::playPlayerHand()
 {
-    //
+    //main logic for playing a hand
+    // set variables
     int input;
     bool done = false;
     bool inputDone = false;
+    int hands = 0;
     string inputString = "Quit fooling around. 1, 2, or 3 only.\n";
-    while (!done)
+    while (!done) // loop to draw cards until stay or bust
     {
+      hands++;
 
 
-      do
+
+      do // loop for exception handling
       {
         cout << "1 to hit. 2 to stay, 3 to double down: ";
-        try
+        try // player input exceptions for hand decisions
         {
           cin >> input;
           if(!cin)
@@ -238,13 +244,9 @@ void Blackjack::playPlayerHand()
           cin.ignore(100, '\n');
         }
       }
-      while(!inputDone);
+      while(!inputDone); // end try block while loop
 
-
-
-      cout << string( 6, '\n' );
-
-      if(input==1)
+      if(input==1) // hit
       {
           hit(playerHand);
           setPlayerStatus("Player Hits");
@@ -256,42 +258,48 @@ void Blackjack::playPlayerHand()
             done=true;
           }
       }
-      else if(input==2)
+      else if(input==2) // stay
       {
           setPlayerStatus("Player Stands");
           done = true;
       }
-      else if(input==3)
+      else if(input == 3) // double
       {
-          if (playerWallet.getFunds()>=bet)
+          if(hands == 1)
           {
-              setPlayerStatus("Player Double Down");
-              playerWallet.subtractFunds(bet);
-              bet*=2;
-
-              hit(playerHand);
-              playerHand.tallyCards();
-              if(playerHand.getTotal()>21)
+              if (playerWallet.getFunds()>=bet)
               {
-                setPlayerStatus("Bust");
-                playerBust = true;
+                  setPlayerStatus("Player Double Down");
+                  playerWallet.subtractFunds(bet);
+                  bet*=2;
+
+                  hit(playerHand);
+                  playerHand.tallyCards();
+                  if(playerHand.getTotal()>21)
+                  {
+                    setPlayerStatus("Bust");
+                    playerBust = true;
+                  }
+                  done=true;
               }
-              done=true;
+              else
+              {
+                setPlayerStatus("Not enough funds to double");
+              }
           }
           else
-          {
-            setPlayerStatus("Not enough funds to double");
-          }
+            setPlayerStatus("You can only double for the first hit");
       }
       else
-          setPlayerStatus("That is not an option.");
-
+          setPlayerStatus("That is not an option."); // anything numbers other
+                                                     // than 1, 2, and 3
       print();
     }
 }
 
 void Blackjack::playDealerHand()
 {
+    // logic for dealer hand
     bool done = false;
 
     flipDealerCard();
@@ -299,14 +307,14 @@ void Blackjack::playDealerHand()
 
     do
     {
-        if(dealerHand.getTotal()>21)
+        if(dealerHand.getTotal()>21) // bust
         {
             dealerBust = true;
             setDealerStatus("Dealer Busts");
             done = true;
         }
-        else if(dealerHand.getTotal()<17)
-        {
+        else if(dealerHand.getTotal()<17) // dealer hits for everything
+        {                                 // under soft 17
             hit(dealerHand);
             setDealerStatus("Dealer Hits");
             dealerHand.tallyCards();
@@ -323,35 +331,40 @@ void Blackjack::playDealerHand()
 
 void Blackjack::print() const
 {
+    // function to print board
     int widthBuffer;
+
+    if(playerHand.getTotal()<10) // variable to set proper
+        widthBuffer = 51;        // spacing for "Wallet:$XXX"
+    else
+        widthBuffer = 50;
+    // whitespace for terminal buffer
     cout << string( 6, '\n' );
     cout << "Dealer hand: ";
     dealerHand.print();
     cout << '\n';
 
+    // only print dealer total after the blind
+    // card has been flipped
     if (dealerHand.getCard(1).getActive()==true)
         cout << "Dealer total: "
-        << dealerHand.getTotal() << "\n\n";
+        << dealerHand.getTotal() << "\n";
     else
-        cout << "\n\n";
+        cout << "\n"; // print new line to match
     if (dealerStatus!="")
         cout << dealerStatus << '\n';
 
-    cout << string( 6, '\n' );
-    cout << setw(40) << tableMessage;
-    cout << string( 6, '\n' );
+    cout << string( 6, '\n' )
+         << setw(40) << tableMessage  // empty space with
+         << string( 6, '\n' );        // message in the middle
 
-      if(playerHand.getTotal()<10)
-          widthBuffer = 51;
-      else
-          widthBuffer = 50;
     cout << "\nPlayer hand: ";
     playerHand.print();
     cout << setw(35) << "Bet: $" << bet << '\n';
     cout << "Player total: "
          << playerHand.getTotal() << setw(widthBuffer)
          << "Wallet: $" << playerWallet.getFunds() << '\n';
-     if(playerStatus!="")
+    if(playerStatus!="")
         cout << playerStatus << "\n\n";
     else
         cout << "\n\n";
@@ -374,6 +387,7 @@ void Blackjack::setTableMessage(string message)
 
 void Blackjack::printTitle()
 {
+  // function to print intro title
   cout << termcolor::blink << "\n\n"
        <<"\t\t  _   _   _   _   _   _     _   _   _   _   _\n"
        <<"\t\t / \\ / \\ / \\ / \\ / \\ / \\   / \\ / \\ / \\ / \\ / \\\n"
@@ -404,6 +418,7 @@ void Blackjack::continueMessage() const
 
 void Blackjack::printRules() const
 {
+  // function to print rules
   int input;
   string inputString = "Input a number to return: ";
   bool done = false;
