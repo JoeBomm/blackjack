@@ -1,5 +1,6 @@
 #include "Hand.h"
 #include <iostream>
+#include <iomanip>
 
 using namespace std;
 
@@ -67,11 +68,14 @@ void Hand::discard()
 
 void Hand::print() const
 {
+
     for(int i=0; i<handLength; i++)
     {
           handList[i].print();
           cout << ' ';
     }
+    for(int i=0; i<6-handLength; i++)
+        cout << "   ";
 }
 
 int Hand::getTotal() const

@@ -9,7 +9,7 @@ class Blackjack
 public:
   Blackjack();
   void game();
-  void placeBet(int);
+  void placeBet();
   void dealerDraw();
   void playerDraw();
   void hit(Hand&);
@@ -33,7 +33,7 @@ public:
 private:
   Deck deck = Deck(4);
   Hand dealerHand, playerHand;
-  Wallet playerWallet= Wallet(500);
+  Wallet playerWallet= Wallet(1000);
   int bet;
   string playerStatus, dealerStatus, tableMessage;
   bool playerBust, dealerBust;
